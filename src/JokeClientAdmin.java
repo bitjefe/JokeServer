@@ -22,53 +22,84 @@
 import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
 import java.net.*;      //Pull in the Java networking libraries for JokeServer.java use
 
-class AdminWorker extends Thread {
+public class JokeClientAdmin {
+    public static void main(String args[]) throws IOException {
+        String serverName;
+        if (args.length < 1) serverName = "localhost";
+        else serverName = args[0];
 
-        Socket sock;
-
-        public AdminWorker(Socket s) {
-            sock = s;
-        }
-
-        public void run() {
-
-            PrintStream out = null;
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-                out = new PrintStream(sock.getOutputStream());
-                try {
-                    //String mode = "JOKE";
-                    String mode = "PROVERB";
-                    out.println("Mode = " + mode);
-                } catch (IndexOutOfBoundsException x) {
-                    System.out.println("Server read error");
-                    x.printStackTrace();
-                }
-                sock.close();
-            } catch (IOException ioe) {
-                System.out.println(ioe);
-            }
-        }
-}
-
-class AdminLooper implements Runnable {
-    public static boolean adminControlSwitch = true;
-
-    public void run() { // RUNning the Admin listen loop
-        System.out.println("In the admin looper thread");
-
-        int q_len = 6; /* Number of requests for OpSys to queue */
-        int port = 5050;  // We are listening at a different port for Admin clients
-        Socket sock;
+        System.out.println("Now Communicating with : " + serverName + ", Port: 45000");
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         try {
-            ServerSocket servsock = new ServerSocket(port, q_len);
-            while (adminControlSwitch) {
-                // wait for the next ADMIN client connection:
-                sock = servsock.accept();
-                new AdminWorker(sock).start();
+            String mode="JOKE";                                                                                      //Start with JOKE mode by default
+            String anotherMode;
+
+            do {
+                anotherMode = in.readLine();
+                toggleMode(mode, serverName);
+                if(mode.equals("JOKE")) mode = "PROVERB";
+                else if (mode.equals("PROVERB")) mode = "JOKE";
+            } while (anotherMode.indexOf("quit") < 0);
+            System.out.println ("Cancelled by user request.");
+
+        } catch (IOException x) {x.printStackTrace ();}
+    }
+
+    static void toggleMode(String mode, String serverName){
+        Socket sock;
+        BufferedReader fromServer;
+        PrintStream toServer;
+        String textFromServer;
+
+        try{
+            sock = new Socket(serverName, 45000);
+
+            fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            toServer = new PrintStream(sock.getOutputStream());
+
+            toServer.println(mode);
+            toServer.flush();
+
+            for(int i=0; i<1; i++) {
+                textFromServer = fromServer.readLine();
+                if (textFromServer != null) System.out.println(textFromServer);
             }
+            sock.close();
+        }
+        catch(IOException x) {
+            System.out.println ("Socket error.");
+            x.printStackTrace ();
+        }
+    }
+}
+
+
+class AdminWorker extends Thread {
+    Socket sock;
+
+    public AdminWorker(Socket s) {
+        sock = s;
+    }
+
+    public void run() {
+        PrintStream out = null;
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            out = new PrintStream(sock.getOutputStream());
+            try {
+                String mode;
+                mode = in.readLine();
+
+                System.out.println("The Mode from AdminWorker = " + mode);
+                out.println("Mode = " + mode);
+
+            } catch (IndexOutOfBoundsException x) {
+                System.out.println("Server read error");
+                x.printStackTrace();
+            }
+            sock.close();
         } catch (IOException ioe) {
             System.out.println(ioe);
         }
@@ -76,24 +107,4 @@ class AdminLooper implements Runnable {
 }
 
 
-public class JokeClientAdmin {
 
-    public static void main(String a[]) throws IOException {
-        int q_len = 6;
-        int port = 4545;
-        Socket sock;
-
-        AdminLooper AL = new AdminLooper();
-        Thread t = new Thread(AL);
-        t.start();  //
-
-        ServerSocket servsock = new ServerSocket(port, q_len);
-
-        System.out.println("Jeff Wiand's Joke server starting up at port 4545.\n");
-        while (true) {
-            // wait for the next client connection:
-            sock = servsock.accept();
-            new Worker(sock).start();
-        }
-    }
-}

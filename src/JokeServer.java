@@ -20,17 +20,8 @@
 
     *Jokes taken from http://pun.me/pages/dad-jokes.php
     *Proverbs taken from https://web.sonoma.edu/users/d/daniels/chinaproverbs.html
- */
 
-import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
-import java.net.*;      //Pull in the Java networking libraries for JokeServer.java use
-import java.util.*;
-
-
-class Worker extends Thread {
-    Socket sock;
-
-    /* joke bit representation          proverb bit representation      jokes sent bitrep    proverbs sent bitrep
+     joke bit representation          proverb bit representation      jokes sent bitrep    proverbs sent bitrep
 
        ABCD = 000001 = 1 = 0x01         ABCD = 000001 = 1 = 0x01          0 = 000 = 0x0         0 = 000 = 0x0
        ABDC = 000010 = 2 = 0x02         ABDC = 000010 = 2 = 0x02          1 = 001 = 0x1         1 = 001 = 0x1
@@ -118,7 +109,39 @@ class Worker extends Thread {
        * Message announces "JOKE CYCLE COMPLETED"
        * State resets to no jokes delivered = 000001 000001 000000 = 0x1040 = 4160              (4192-4160 = 32 decimal)
        * Repeat until switched to proverb mode or quit
-    */
+
+
+                   //while(mode == joke){
+            for(int i = 0; i< jState.length; i++){
+                if (jState[i][0] == userId ){
+                    if(jState[i[9] == 0)                                     //will adding one to jState work if proverbs != 0 (need another loop for this)
+                        System.out.println(jState[i][4]);
+                    userId = jState[i+1][0] ;                                 //how to handle the 4 different jState incrementers?  Do this 4 different times to handle breaks and switches to proverb
+                else (jState[i][9] == 1)
+                    System.out.println(jState[i][5]);
+                    userId = jState[i+1][0];
+                else (jState[i][9] == 2)
+                    System.out.println(jState[i][6]);
+                    userId = jState[i+1][0];
+                else (jState[i][9] == 3)
+                    System.out.println(jState[i][7]);
+                    userId = jState[i+1][0];
+                else (jState[i][9] == 4)
+                    System.out.println(jState[i][8]);
+                    userId = jState[i-4][0];
+                }
+            }
+
+
+ */
+
+import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
+import java.net.*;      //Pull in the Java networking libraries for JokeServer.java use
+import java.util.*;
+
+
+class Worker extends Thread {
+    Socket sock;
 
     Worker(Socket s) {
         sock = s;
@@ -127,7 +150,7 @@ class Worker extends Thread {
     public void run() {
 
         String jokeIndexString;
-        int jokeIndex;
+        int jokeIndex=0;
         PrintStream out = null;
         BufferedReader in = null;
         try {
@@ -135,24 +158,23 @@ class Worker extends Thread {
             out = new PrintStream(sock.getOutputStream());
 
 
-                try {
-                    String userName;
-                    String userId;
-                    //String mode = "JOKE";
-                    String mode = "PROVERB";
+            try {
+                String userName;
+                String userId;
+                String mode = "JOKE";
+                //String mode = "PROVERB";
+                
+                //mode = in.readLine();
+                userId = in.readLine();
+                userName = in.readLine();
+                jokeIndexString = in.readLine();
+                jokeIndex = Integer.parseInt(jokeIndexString);
 
-                    userId = in.readLine();
-                    userName = in.readLine();
-                    jokeIndexString = in.readLine();
-                    jokeIndex = Integer.parseInt(jokeIndexString);
+                getJokeProverb(userName, userId, jokeIndex, mode, out);
 
-                    System.out.println("Mode = " + mode);
-
-                    getJokeProverb(userName, userId, jokeIndex, mode, out);
-
-                } catch (IndexOutOfBoundsException x) {
-                    System.out.println("Server read error");
-                    x.printStackTrace();
+            } catch (IndexOutOfBoundsException x) {
+                System.out.println("Server read error");
+                x.printStackTrace();
             }
             sock.close();
         } catch (IOException ioe) {
@@ -164,6 +186,7 @@ class Worker extends Thread {
 
         List<String> userIdArray = new ArrayList<>();
         List<String> userState = new ArrayList<>();
+
 
         String[] jokes = {"JA " + userName + ": 5/4 of people admit that they’re bad with fractions.",
                 "JB " + userName + ": Why did the coffee file a police report? It got mugged",
@@ -185,6 +208,7 @@ class Worker extends Thread {
                 {"ABCBABCD40", "000001000001100000", "4192", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
 
         };
+
 
         if(mode.equals("JOKE")){
             try {
@@ -225,39 +249,6 @@ class Worker extends Thread {
         }
     }
 
-    /*
-            //while(mode == joke){
-            for(int i = 0; i< jState.length; i++){
-                if (jState[i][0] == userId ){
-                    if(jState[i[9] == 0)                                     //will adding one to jState work if proverbs != 0 (need another loop for this)
-                        System.out.println(jState[i][4]);
-                    userId = jState[i+1][0] ;                                 //how to handle the 4 different jState incrementers?  Do this 4 different times to handle breaks and switches to proverb
-                else (jState[i][9] == 1)
-                    System.out.println(jState[i][5]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 2)
-                    System.out.println(jState[i][6]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 3)
-                    System.out.println(jState[i][7]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 4)
-                    System.out.println(jState[i][8]);
-                    userId = jState[i-4][0];
-                }
-            }
-*/
-
-
-
-    static String toText (byte ip[]) {
-        StringBuffer result = new StringBuffer();
-        for(int i=0; i < ip.length; ++i){
-            if(i > 0) result.append(".");
-            result.append(0xff & ip[i]);
-        }
-        return result.toString();
-    }
 }
 
 public class JokeServer {
@@ -267,12 +258,38 @@ public class JokeServer {
         int port = 43000;
         Socket sock;
 
+        AdminLooper AL = new AdminLooper(); // create a DIFFERENT thread
+        Thread t = new Thread(AL);
+        t.start();  // ...and start it, waiting for administration input
+
         ServerSocket servsock = new ServerSocket(port, q_len);
 
-        System.out.println("Jeff Wiand's Joke Server 1.8 starting up, listening at port 43000. \n");
+        System.out.println("Joke Server starting up, listening at port 43000. \n");
         while (true) {
             sock = servsock.accept();
             new Worker(sock).start();
+        }
+    }
+}
+
+class AdminLooper implements Runnable {
+    public static boolean adminControlSwitch = true;
+
+    public void run() { // Running the Admin listen loop
+        int q_len = 6; /* Number of requests for OpSys to queue */
+        int port = 45000;  // We are listening at a different port for Admin clients
+        Socket sock;
+
+        try {
+            ServerSocket servsock = new ServerSocket(port, q_len);
+            System.out.println("Mode Server starting up, listening at port 45000. \n");
+            while (adminControlSwitch) {
+                // wait for the next ADMIN client connection:
+                sock = servsock.accept();
+                new AdminWorker(sock).start();
+            }
+        } catch (IOException ioex) {
+            System.out.println(ioex);
         }
     }
 }

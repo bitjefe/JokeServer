@@ -33,8 +33,7 @@ public class JokeClient {
         if (args.length < 1) serverName = "localhost";
         else serverName = args[0];
 
-        System.out.println("Jeff Wiand's Joke Client, 1.8. \n");
-        System.out.println("Using server : " + serverName + ", Port: 43000");
+        System.out.println("Now Communicating with : " + serverName + ", Port: 43000");
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         try {
             String userName;                                                                        //local definition of user's name of type String
@@ -43,7 +42,6 @@ public class JokeClient {
             System.out.print("Enter your name please, (quit) to end: ");                            //Ask the user for their name once
             System.out.flush();
             userName = in.readLine();                                                           //store user response as userName type string outside the loop
-
 
             String userId = UUID.randomUUID().toString();
             System.out.println("userIdString for " + userName + " = "+ userId);
