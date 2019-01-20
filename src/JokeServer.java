@@ -161,8 +161,8 @@ class Worker extends Thread {
             try {
                 String userName;
                 String userId;
-                String mode = "JOKE";
-                //String mode = "PROVERB";
+               // String mode = "JOKE";
+                String mode = "PROVERB";
                 
                 //mode = in.readLine();
                 userId = in.readLine();
@@ -209,8 +209,9 @@ class Worker extends Thread {
 
         };
 
-
-        if(mode.equals("JOKE")){
+        boolean jokeMode = false;
+        jokeMode = JokeServer.JokeMode ;
+        if(jokeMode){
             try {
 
                 if(userIdArray.contains(userId))
@@ -252,6 +253,8 @@ class Worker extends Thread {
 }
 
 public class JokeServer {
+
+    static boolean JokeMode = false;
 
     public static void main(String a[]) throws IOException {
         int q_len = 6;

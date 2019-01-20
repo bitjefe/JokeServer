@@ -92,6 +92,7 @@ class AdminWorker extends Thread {
                 String mode;
                 mode = in.readLine();
 
+                JokeServer.JokeMode = true;
                 System.out.println("The Mode from AdminWorker = " + mode);
                 out.println("Mode = " + mode);
 
