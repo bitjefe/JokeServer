@@ -38,8 +38,14 @@ public class JokeClientAdmin {
             do {
                 anotherMode = in.readLine();
                 toggleMode(mode, serverName);
-                if(mode.equals("JOKE")) mode = "PROVERB";
-                else if (mode.equals("PROVERB")) mode = "JOKE";
+                if(mode.equals("JOKE")) {
+                    System.out.println("Proverb Mode");
+                    mode = "PROVERB";
+                }
+                else if (mode.equals("PROVERB")) {
+                    System.out.println("Joke Mode");
+                    mode = "JOKE";
+                }
             } while (anotherMode.indexOf("quit") < 0);
             System.out.println ("Cancelled by user request.");
 
@@ -74,7 +80,6 @@ public class JokeClientAdmin {
     }
 }
 
-
 class AdminWorker extends Thread {
     Socket sock;
 
@@ -89,12 +94,14 @@ class AdminWorker extends Thread {
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             out = new PrintStream(sock.getOutputStream());
             try {
-                String mode;
-                mode = in.readLine();
-
-                JokeServer.JokeMode = true;
-                System.out.println("The Mode from AdminWorker = " + mode);
-                out.println("Mode = " + mode);
+                if(JokeServer.JokeMode == true) {
+                    System.out.println("Proverb Mode");
+                    JokeServer.JokeMode = false;
+                }
+                else{
+                    System.out.println("Joke Mode");
+                    JokeServer.JokeMode = true;
+                }
 
             } catch (IndexOutOfBoundsException x) {
                 System.out.println("Server read error");

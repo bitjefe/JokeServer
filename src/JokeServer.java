@@ -150,27 +150,28 @@ class Worker extends Thread {
     public void run() {
 
         String jokeIndexString;
+        String proverbIndexString;
         int jokeIndex=0;
+        int proverbIndex = 0;
         PrintStream out = null;
         BufferedReader in = null;
         try {
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             out = new PrintStream(sock.getOutputStream());
 
-
             try {
                 String userName;
                 String userId;
-               // String mode = "JOKE";
-                String mode = "PROVERB";
-                
-                //mode = in.readLine();
+
                 userId = in.readLine();
                 userName = in.readLine();
                 jokeIndexString = in.readLine();
                 jokeIndex = Integer.parseInt(jokeIndexString);
 
-                getJokeProverb(userName, userId, jokeIndex, mode, out);
+                proverbIndexString = in.readLine();
+                proverbIndex = Integer.parseInt(proverbIndexString);
+
+                getJokeProverb(userName, userId, jokeIndex, proverbIndex, out);
 
             } catch (IndexOutOfBoundsException x) {
                 System.out.println("Server read error");
@@ -182,7 +183,7 @@ class Worker extends Thread {
         }
     }
 
-    static void getJokeProverb(String userName, String userId, Integer jokeIndex, String mode, PrintStream out) {
+    static void getJokeProverb(String userName, String userId, Integer jokeIndex, Integer proverbIndex, PrintStream out) {
 
         List<String> userIdArray = new ArrayList<>();
         List<String> userState = new ArrayList<>();
@@ -209,11 +210,8 @@ class Worker extends Thread {
 
         };
 
-        boolean jokeMode = false;
-        jokeMode = JokeServer.JokeMode ;
-        if(jokeMode){
+        if(JokeServer.JokeMode){
             try {
-
                 if(userIdArray.contains(userId))
                     System.out.println("user already exists");
                 else
@@ -221,16 +219,18 @@ class Worker extends Thread {
 
                 if (jokeIndex == 4) {
                     out.println("Joke Cycle Complete");
+                    jokeIndex = 0;
 
                 } else {
                     out.println(jokes[jokeIndex]);
+                    jokeIndex++;
                 }
             } catch (IndexOutOfBoundsException ex) {
                 out.println("Failed in attempt to look up " + userId);
             }
         }
 
-        else if (mode.equals("PROVERB")){
+        else {
             try {
 
                 if(userIdArray.contains(userId))
@@ -238,23 +238,29 @@ class Worker extends Thread {
                 else
                     userIdArray.add(userId);
 
-                if (jokeIndex == 4) {
+                if (proverbIndex == 4) {
                     out.println("Proverb Cycle Complete");
+                    proverbIndex = 0;
 
                 } else {
-                    out.println(proverbs[jokeIndex]);
+                    out.println(proverbs[proverbIndex]);
+                    proverbIndex++;
                 }
             } catch (IndexOutOfBoundsException ex) {
                 out.println("Failed in attempt to look up " + userId);
             }
         }
-    }
 
+        out.println(jokeIndex);
+        out.println(proverbIndex);
+
+    }
 }
 
 public class JokeServer {
 
-    static boolean JokeMode = false;
+    static boolean JokeMode = true;
+    //static boolean shutdown = false;
 
     public static void main(String a[]) throws IOException {
         int q_len = 6;

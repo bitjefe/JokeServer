@@ -23,6 +23,8 @@
 
 import java.io.*;       //Pull in the Java Input - Output libraries for InetClient.java use
 import java.net.*;      //Pull in the Java networking libraries for InetClient.java use
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;  //Pull in the Java library for creating a unique identifier
 
 
@@ -30,6 +32,8 @@ public class JokeClient {
     public static void main (String args[]) {
         String serverName;
         int jokeIndex=0;
+        int proverbIndex=0;
+        ArrayList<Integer> index = new ArrayList<>();
         if (args.length < 1) serverName = "localhost";
         else serverName = args[0];
 
@@ -48,11 +52,17 @@ public class JokeClient {
 
             do {
                 anotherJoke = in.readLine();                                                    //if the client hits enter, it will print another joke in the server
-                getJokeProverb(userName, userId, jokeIndex, serverName);
-                jokeIndex++;
-                if(jokeIndex==5){
-                    jokeIndex=0;
-                }
+                index.clear();
+                index = getJokeProverb(userName, userId, jokeIndex, proverbIndex, serverName);
+
+                jokeIndex = index.get(0);
+                proverbIndex = index.get(1);
+
+                System.out.println("arrayList index after get call = " + index);
+                System.out.println("joke index after get call = " + jokeIndex);
+                System.out.println("proverb index after get call = " + proverbIndex);
+
+
             } while (anotherJoke.indexOf("quit") < 0);
             System.out.println ("Cancelled by user request.");
 
@@ -60,11 +70,14 @@ public class JokeClient {
     }
 
 
-    static void getJokeProverb(String userName, String userId, Integer jokeIndex, String serverName){
+    static ArrayList<Integer> getJokeProverb(String userName, String userId, Integer jokeIndex, Integer proverbIndex, String serverName){
         Socket sock;
         BufferedReader fromServer;
         PrintStream toServer;
         String textFromServer;
+
+        ArrayList<Integer> index = new ArrayList<>();
+        index.clear();
 
         try{
             sock = new Socket(serverName, 43000);
@@ -72,15 +85,28 @@ public class JokeClient {
             fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             toServer = new PrintStream(sock.getOutputStream());
 
+            System.out.println("Proverb index before to server = " + proverbIndex);
+
             toServer.println(userId);
             toServer.println(userName);
             toServer.println(jokeIndex);
+            toServer.println(proverbIndex);
             toServer.flush();
 
-            for(int i=0; i<5; i++) {
+            for(int i=0; i<3; i++) {
                 textFromServer = fromServer.readLine();
-                if (textFromServer != null) System.out.println(textFromServer);
+                if (textFromServer != null && i==1) {
+                    jokeIndex = Integer.parseInt(textFromServer);
+                    index.add(jokeIndex);
+                } else if (textFromServer != null && i==2) {
+                    System.out.println(textFromServer);
+                    proverbIndex = Integer.parseInt(textFromServer);
+                    index.add(proverbIndex);
+                }
+                else if (textFromServer !=null && i==0) System.out.println(textFromServer);
             }
+
+            System.out.println(index);
 
             sock.close();
         }
@@ -88,5 +114,7 @@ public class JokeClient {
             System.out.println ("Socket error.");
             x.printStackTrace ();
         }
+
+        return index;
     }
 }
