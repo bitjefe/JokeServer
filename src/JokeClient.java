@@ -58,9 +58,9 @@ public class JokeClient {
                 jokeIndex = index.get(0);
                 proverbIndex = index.get(1);
 
-                System.out.println("arrayList index after get call = " + index);
-                System.out.println("joke index after get call = " + jokeIndex);
-                System.out.println("proverb index after get call = " + proverbIndex);
+               // System.out.println("arrayList index after get call = " + index);
+               // System.out.println("joke index after get call = " + jokeIndex);
+               // System.out.println("proverb index after get call = " + proverbIndex);
 
 
             } while (anotherJoke.indexOf("quit") < 0);
@@ -85,8 +85,6 @@ public class JokeClient {
             fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             toServer = new PrintStream(sock.getOutputStream());
 
-            System.out.println("Proverb index before to server = " + proverbIndex);
-
             toServer.println(userId);
             toServer.println(userName);
             toServer.println(jokeIndex);
@@ -99,14 +97,14 @@ public class JokeClient {
                     jokeIndex = Integer.parseInt(textFromServer);
                     index.add(jokeIndex);
                 } else if (textFromServer != null && i==2) {
-                    System.out.println(textFromServer);
+                  //  System.out.println(textFromServer);
                     proverbIndex = Integer.parseInt(textFromServer);
                     index.add(proverbIndex);
                 }
                 else if (textFromServer !=null && i==0) System.out.println(textFromServer);
             }
 
-            System.out.println(index);
+            //System.out.println(index);
 
             sock.close();
         }

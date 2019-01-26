@@ -34,16 +34,16 @@ public class JokeClientAdmin {
         try {
             String mode="JOKE";                                                                                      //Start with JOKE mode by default
             String anotherMode;
-
+            System.out.println("You are starting in Joke Mode");
             do {
                 anotherMode = in.readLine();
                 toggleMode(mode, serverName);
                 if(mode.equals("JOKE")) {
-                    System.out.println("Proverb Mode");
+                    System.out.println("Switched to Proverb Mode");
                     mode = "PROVERB";
                 }
                 else if (mode.equals("PROVERB")) {
-                    System.out.println("Joke Mode");
+                    System.out.println("Switched to Joke Mode");
                     mode = "JOKE";
                 }
             } while (anotherMode.indexOf("quit") < 0);
@@ -54,23 +54,16 @@ public class JokeClientAdmin {
 
     static void toggleMode(String mode, String serverName){
         Socket sock;
-        BufferedReader fromServer;
         PrintStream toServer;
-        String textFromServer;
 
         try{
             sock = new Socket(serverName, 45000);
 
-            fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             toServer = new PrintStream(sock.getOutputStream());
 
             toServer.println(mode);
             toServer.flush();
 
-            for(int i=0; i<1; i++) {
-                textFromServer = fromServer.readLine();
-                if (textFromServer != null) System.out.println(textFromServer);
-            }
             sock.close();
         }
         catch(IOException x) {
@@ -93,13 +86,14 @@ class AdminWorker extends Thread {
         try {
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             out = new PrintStream(sock.getOutputStream());
+
             try {
                 if(JokeServer.JokeMode == true) {
-                    System.out.println("Proverb Mode");
+                    System.out.println("Switched to Proverb Mode");
                     JokeServer.JokeMode = false;
                 }
                 else{
-                    System.out.println("Joke Mode");
+                    System.out.println("Switched to Joke Mode");
                     JokeServer.JokeMode = true;
                 }
 
