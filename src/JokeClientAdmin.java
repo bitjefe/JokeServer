@@ -71,42 +71,42 @@ public class JokeClientAdmin {
             x.printStackTrace ();
         }
     }
-}
 
-class AdminWorker extends Thread {
-    Socket sock;
+    public static class AdminWorker extends Thread {
 
-    public AdminWorker(Socket s) {
-        sock = s;
-    }
+        Socket sock;
 
-    public void run() {
-        PrintStream out = null;
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            out = new PrintStream(sock.getOutputStream());
+        public AdminWorker(Socket s) { sock = s;}
 
+        public void run() {
+            PrintStream out = null;
+            BufferedReader in = null;
             try {
-                if(JokeServer.JokeMode == true) {
-                    System.out.println("Switched to Proverb Mode");
-                    JokeServer.JokeMode = false;
-                }
-                else{
-                    System.out.println("Switched to Joke Mode");
-                    JokeServer.JokeMode = true;
-                }
+                in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+                out = new PrintStream(sock.getOutputStream());
 
-            } catch (IndexOutOfBoundsException x) {
-                System.out.println("Server read error");
-                x.printStackTrace();
+                try {
+                    if(JokeServer.JokeMode == true) {
+                        System.out.println("Switched to Proverb Mode");
+                        JokeServer.JokeMode = false;
+                    }
+                    else{
+                        System.out.println("Switched to Joke Mode");
+                        JokeServer.JokeMode = true;
+                    }
+
+                } catch (IndexOutOfBoundsException x) {
+                    System.out.println("Server read error");
+                    x.printStackTrace();
+                }
+                sock.close();
+            } catch (IOException ioe) {
+                System.out.println(ioe);
             }
-            sock.close();
-        } catch (IOException ioe) {
-            System.out.println(ioe);
         }
     }
 }
+
 
 
 

@@ -166,35 +166,35 @@ class Worker extends Thread {
         String jokeOrderString;
         String proverbOrderString;
 
-        int jokeIndex=0;
-        int proverbIndex = 0;
-        PrintStream out = null;
-        BufferedReader in = null;
+        int jokeIndex=0;                                                                         // local definition for jokeIndex of type int
+        int proverbIndex = 0;                                                                    // local definition for proverbIndex of type int
+        PrintStream out = null;                                                                  // local definition for out of type PrintStream
+        BufferedReader in = null;                                                                // local definition for in of type BufferedReader
         try {
             in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             out = new PrintStream(sock.getOutputStream());
 
             try {
-                String userName;
-                String userId;
+                String userName;                                                                        // local definition for userName (What the client enters for their name) of type String
+                String userId;                                                                          // local definition for userID (UUID) of type String
 
-                userId = in.readLine();
-                clientNameAndOrderString = in.readLine();
+                userId = in.readLine();                                                                 // read in the userId (UUID) from the JokeClient
+                clientNameAndOrderString = in.readLine();                                               // read in the userName, Joke Order, Proverb Ordered from the JokeClient
 
-                String[] clientNameAndOrderArray = clientNameAndOrderString.split(":");
+                String[] clientNameAndOrderArray = clientNameAndOrderString.split(":");           // split above string on colons and add to clientNameAndOrderArray
 
-                userName = clientNameAndOrderArray[0];
-                jokeOrderString = clientNameAndOrderArray[1];
-                proverbOrderString =  clientNameAndOrderArray[2];
+                userName = clientNameAndOrderArray[0];                                                  // assign userName to first index of clientNameAndOrderArray
+                jokeOrderString = clientNameAndOrderArray[1];                                           // assign the string representing the joke order to the second index of clientNameAndOrderArray
+                proverbOrderString =  clientNameAndOrderArray[2];                                       // assign the string representing the proverb order to the third index of clientNameAndOrderArray
 
-                jokeIndexString = in.readLine();
-                jokeIndex = Integer.parseInt(jokeIndexString);
+                jokeIndexString = in.readLine();                                                        // read in the string representing the joke index from the JokeClient
+                jokeIndex = Integer.parseInt(jokeIndexString);                                          // parse jokeIndexString into an integer, jokeIndex, for use in the server processing code "getJokeProverb"
 
-                proverbIndexString = in.readLine();
-                proverbIndex = Integer.parseInt(proverbIndexString);
+                proverbIndexString = in.readLine();                                                     // read in the string representing the joke index from the JokeClient
+                proverbIndex = Integer.parseInt(proverbIndexString);                                    // parse proverbIndexString into an integer, proverbIndex, for use in the server processing code "getJokeProverb"
 
 
-                getJokeProverb(userName, userId, jokeOrderString, proverbOrderString, jokeIndex, proverbIndex, out);
+                getJokeProverb(userName, userId, jokeOrderString, proverbOrderString, jokeIndex, proverbIndex, out);         // call getJokeProverb custom method to return the correct joke or proverb and state back to the JokeClient
 
             } catch (IndexOutOfBoundsException x) {
                 System.out.println("Server read error");
@@ -479,7 +479,7 @@ class AdminLooper implements Runnable {
             while (adminControlSwitch) {
                 // wait for the next ADMIN client connection:
                 sock = servsock.accept();
-                new AdminWorker(sock).start();
+                new JokeClientAdmin.AdminWorker(sock).start();
             }
         } catch (IOException ioex) {
             System.out.println(ioex);
