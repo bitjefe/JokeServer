@@ -24,6 +24,7 @@
 import java.io.*;       //Pull in the Java Input - Output libraries for InetClient.java use
 import java.net.*;      //Pull in the Java networking libraries for InetClient.java use
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;  //Pull in the Java library for creating a unique identifier
 
@@ -39,6 +40,37 @@ public class JokeClient {
 
         System.out.println("Now Communicating with : " + serverName + ", Port: 43000");
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+        // put this into it's on method later (generateRandom)????
+        List<String> jokeRandOrder = new ArrayList<>();
+        jokeRandOrder.add("A");
+        jokeRandOrder.add("B");
+        jokeRandOrder.add("C");
+        jokeRandOrder.add("D");
+
+        Collections.shuffle(jokeRandOrder);                     //randomize our jokes array
+
+        StringBuilder jokeOrderString = new StringBuilder(jokeRandOrder.size());
+        for(String s: jokeRandOrder){
+            jokeOrderString.append(s);
+        }
+
+        List<String> proverbRandOrder = new ArrayList<>();
+        proverbRandOrder.add("A");
+        proverbRandOrder.add("B");
+        proverbRandOrder.add("C");
+        proverbRandOrder.add("D");
+
+        Collections.shuffle(proverbRandOrder);                  //randomize our proverbs array
+
+        StringBuilder proverbOrderString = new StringBuilder(proverbRandOrder.size());
+        for(String s: proverbRandOrder){
+            proverbOrderString.append(s);
+        }
+
+        System.out.println("Joke Order: "+ jokeOrderString);
+        System.out.println("Proverb Order: " + proverbOrderString);
+
         try {
             String userName;                                                                        //local definition of user's name of type String
             String anotherJoke;
@@ -53,15 +85,10 @@ public class JokeClient {
             do {
                 anotherJoke = in.readLine();                                                    //if the client hits enter, it will print another joke in the server
                 index.clear();
-                index = getJokeProverb(userName, userId, jokeIndex, proverbIndex, serverName);
+                index = getJokeProverb(userName, userId, jokeOrderString.toString(), proverbOrderString.toString(), jokeIndex, proverbIndex, serverName);
 
                 jokeIndex = index.get(0);
                 proverbIndex = index.get(1);
-
-               // System.out.println("arrayList index after get call = " + index);
-               // System.out.println("joke index after get call = " + jokeIndex);
-               // System.out.println("proverb index after get call = " + proverbIndex);
-
 
             } while (anotherJoke.indexOf("quit") < 0);
             System.out.println ("Cancelled by user request.");
@@ -70,7 +97,7 @@ public class JokeClient {
     }
 
 
-    static ArrayList<Integer> getJokeProverb(String userName, String userId, Integer jokeIndex, Integer proverbIndex, String serverName){
+    static ArrayList<Integer> getJokeProverb(String userName, String userId, String jokeOrderString, String proverbOrderString,Integer jokeIndex, Integer proverbIndex, String serverName){
         Socket sock;
         BufferedReader fromServer;
         PrintStream toServer;
@@ -85,26 +112,24 @@ public class JokeClient {
             fromServer = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             toServer = new PrintStream(sock.getOutputStream());
 
-            toServer.println(userId);
-            toServer.println(userName);
+            toServer.println(userId);                                                                       // sends UUID string to jokeServer
+            toServer.println(userName+":"+jokeOrderString+":"+proverbOrderString);                          //sends username, jokeOrder, and proverbOrder in one string to jokeServer
             toServer.println(jokeIndex);
             toServer.println(proverbIndex);
+
             toServer.flush();
 
-            for(int i=0; i<3; i++) {
+            for(int i=0; i<4; i++) {
                 textFromServer = fromServer.readLine();
                 if (textFromServer != null && i==1) {
                     jokeIndex = Integer.parseInt(textFromServer);
                     index.add(jokeIndex);
                 } else if (textFromServer != null && i==2) {
-                  //  System.out.println(textFromServer);
                     proverbIndex = Integer.parseInt(textFromServer);
                     index.add(proverbIndex);
                 }
                 else if (textFromServer !=null && i==0) System.out.println(textFromServer);
             }
-
-            //System.out.println(index);
 
             sock.close();
         }

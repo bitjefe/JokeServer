@@ -133,6 +133,17 @@
             }
 
 
+
+                    /*
+        String[][] jState = {
+
+                {"ABCBABCD00", "000001000001000000", "4160", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
+                {"ABCBABCD10", "000001000001001000", "4168", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
+                {"ABCBABCD20", "000001000001010000", "4176", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
+                {"ABCBABCD30", "000001000001011000", "4184", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
+                {"ABCBABCD40", "000001000001100000", "4192", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
+
+        };
  */
 
 import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
@@ -149,8 +160,12 @@ class Worker extends Thread {
 
     public void run() {
 
+        String clientNameAndOrderString;
         String jokeIndexString;
         String proverbIndexString;
+        String jokeOrderString;
+        String proverbOrderString;
+
         int jokeIndex=0;
         int proverbIndex = 0;
         PrintStream out = null;
@@ -164,14 +179,22 @@ class Worker extends Thread {
                 String userId;
 
                 userId = in.readLine();
-                userName = in.readLine();
+                clientNameAndOrderString = in.readLine();
+
+                String[] clientNameAndOrderArray = clientNameAndOrderString.split(":");
+
+                userName = clientNameAndOrderArray[0];
+                jokeOrderString = clientNameAndOrderArray[1];
+                proverbOrderString =  clientNameAndOrderArray[2];
+
                 jokeIndexString = in.readLine();
                 jokeIndex = Integer.parseInt(jokeIndexString);
 
                 proverbIndexString = in.readLine();
                 proverbIndex = Integer.parseInt(proverbIndexString);
 
-                getJokeProverb(userName, userId, jokeIndex, proverbIndex, out);
+
+                getJokeProverb(userName, userId, jokeOrderString, proverbOrderString, jokeIndex, proverbIndex, out);
 
             } catch (IndexOutOfBoundsException x) {
                 System.out.println("Server read error");
@@ -183,46 +206,145 @@ class Worker extends Thread {
         }
     }
 
-    static void getJokeProverb(String userName, String userId, Integer jokeIndex, Integer proverbIndex, PrintStream out) {
+    static void getJokeProverb(String userName, String userId, String jokeOrderString, String proverbOrderString, Integer jokeIndex, Integer proverbIndex, PrintStream out) {
 
         List<String> userIdArray = new ArrayList<>();
-        List<String> userState = new ArrayList<>();
+        List<String> jokeOrderList = new ArrayList<>();
+        List<String> proverbOrderList = new ArrayList<>();
+        List<String> jokesList = new ArrayList<>();
+        List<String> proverbsList = new ArrayList<>();
 
 
-        String[] jokes = {"JA " + userName + ": 5/4 of people admit that they’re bad with fractions.",
-                "JB " + userName + ": Why did the coffee file a police report? It got mugged",
-                "JC " + userName +": What do you call an elephant that doesn't matter? An irrelephant",
-                "JD " + userName + ": Why did the scarecrow win an award? Because he was outstanding in his field."};
+        // create own function to handle this parsing /adding
+        String joke1 = String.valueOf(jokeOrderString.charAt(0));
+        String joke2 = String.valueOf(jokeOrderString.charAt(1));
+        String joke3 = String.valueOf(jokeOrderString.charAt(2));
+        String joke4 = String.valueOf(jokeOrderString.charAt(3));
 
-        String[] proverbs = {"PA " + userName + ": Good is the Enemy of Great",
-                "PB " + userName + ": Wonder is the beginning of wisdom. ",
-                "PC " + userName + ": To have principles first have courage",
-                "PD " + userName + ": Determination tempers the sword of your character."};
+        jokeOrderList.add(joke1);
+        jokeOrderList.add(joke2);
+        jokeOrderList.add(joke3);
+        jokeOrderList.add(joke4);
+
+        System.out.println(jokeOrderList);
+
+        String proverb1 = String.valueOf(proverbOrderString.charAt(0));
+        String proverb2 = String.valueOf(proverbOrderString.charAt(1));
+        String proverb3 = String.valueOf(proverbOrderString.charAt(2));
+        String proverb4 = String.valueOf(proverbOrderString.charAt(3));
+
+        proverbOrderList.add(proverb1);
+        proverbOrderList.add(proverb2);
+        proverbOrderList.add(proverb3);
+        proverbOrderList.add(proverb4);
+
+        System.out.println(proverbOrderList);
 
 
-        String[][] jState = {
+        String [][] jokesArr = {
 
-                {"ABCBABCD00", "000001000001000000", "4160", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD10", "000001000001001000", "4168", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD20", "000001000001010000", "4176", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD30", "000001000001011000", "4184", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD40", "000001000001100000", "4192", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-
+                {"A", "JA " + userName + ": 5/4 of people admit that they’re bad with fractions."},
+                {"B", "JB " + userName + ": Why did the coffee file a police report? It got mugged"},
+                {"C", "JC " + userName + ": What do you call an elephant that doesn't matter? An irrelephant"},
+                {"D", "JD " + userName + ": Why did the scarecrow win an award? Because he was outstanding in his field."}
         };
+
+        String [][] proverbsArr = {
+
+                {"A", "PA " + userName + ": Good is the Enemy of Great"},
+                {"B", "PB " + userName + ": Wonder is the beginning of wisdom. "},
+                {"C", "PC " + userName + ": To have principles first have courage"},
+                {"D", "PD " + userName + ": Determination tempers the sword of your character."}
+        };
+
+        jokesList.add("JA " + userName + ": 5/4 of people admit that they’re bad with fractions.");
+        jokesList.add("JB " + userName + ": Why did the coffee file a police report? It got mugged");
+        jokesList.add("JC " + userName + ": What do you call an elephant that doesn't matter? An irrelephant");
+        jokesList.add("JD " + userName + ": Why did the scarecrow win an award? Because he was outstanding in his field.");
+
+        proverbsList.add("PA " + userName + ": Good is the Enemy of Great");
+        proverbsList.add("PB " + userName + ": Wonder is the beginning of wisdom. ");
+        proverbsList.add("PC " + userName + ": To have principles first have courage");
+        proverbsList.add("PD " + userName + ": Determination tempers the sword of your character.");
+
+
+        // do i need to store the UUID / jokeOrder / ProverbOrder / ProverbIndex / Joke Index
 
         if(JokeServer.JokeMode){
             try {
                 if(userIdArray.contains(userId))
                     System.out.println("user already exists");
                 else
-                    userIdArray.add(userId);
+                    userIdArray.add(userId);                        //UUID is added to the userIdArray (however the state is not recorded in the list with it since its only an arrayList. Refactor to array?
 
                 if (jokeIndex == 4) {
                     out.println("Joke Cycle Complete");
                     jokeIndex = 0;
 
                 } else {
-                    out.println(jokes[jokeIndex]);
+                    if(jokeIndex ==0) {
+                        if(jokeOrderList.get(0).equals("A")){
+                            out.println(jokesArr[0][1]);
+                            System.out.println((jokesArr[0][1]));
+                        } else if(jokeOrderList.get(0).equals("B")){
+                            out.println(jokesArr[1][1]);
+                            System.out.println((jokesArr[1][1]));
+                        } else if(jokeOrderList.get(0).equals("C")) {
+                            out.println(jokesArr[2][1]);
+                            System.out.println((jokesArr[2][1]));
+                        } else if(jokeOrderList.get(0).equals("D")) {
+                            out.println(jokesArr[3][1]);
+                            System.out.println((jokesArr[3][1]));
+                        }
+                    }
+
+                    else if(jokeIndex ==1) {
+                        if(jokeOrderList.get(1).equals("A")){
+                            out.println(jokesArr[0][1]);
+                            System.out.println((jokesArr[0][1]));
+                        } else if(jokeOrderList.get(1).equals("B")){
+                            out.println(jokesArr[1][1]);
+                            System.out.println((jokesArr[1][1]));
+                        } else if(jokeOrderList.get(1).equals("C")) {
+                            out.println(jokesArr[2][1]);
+                            System.out.println((jokesArr[2][1]));
+                        } else if(jokeOrderList.get(1).equals("D")) {
+                            out.println(jokesArr[3][1]);
+                            System.out.println((jokesArr[3][1]));
+                        }
+                    }
+
+                    else if(jokeIndex ==2) {
+                        if(jokeOrderList.get(2).equals("A")){
+                            out.println(jokesArr[0][1]);
+                            System.out.println((jokesArr[0][1]));
+                        } else if(jokeOrderList.get(2).equals("B")){
+                            out.println(jokesArr[1][1]);
+                            System.out.println((jokesArr[1][1]));
+                        } else if(jokeOrderList.get(2).equals("C")) {
+                            out.println(jokesArr[2][1]);
+                            System.out.println((jokesArr[2][1]));
+                        } else if(jokeOrderList.get(2).equals("D")) {
+                            out.println(jokesArr[3][1]);
+                            System.out.println((jokesArr[3][1]));
+                        }
+                    }
+                    else if(jokeIndex ==3) {
+                        if(jokeOrderList.get(3).equals("A")){
+                            out.println(jokesArr[0][1]);
+                            System.out.println((jokesArr[0][1]));
+                        } else if(jokeOrderList.get(3).equals("B")){
+                            out.println(jokesArr[1][1]);
+                            System.out.println((jokesArr[1][1]));
+                        } else if(jokeOrderList.get(3).equals("C")) {
+                            out.println(jokesArr[2][1]);
+                            System.out.println((jokesArr[2][1]));
+                        } else if(jokeOrderList.get(3).equals("D")) {
+                            out.println(jokesArr[3][1]);
+                            System.out.println((jokesArr[3][1]));
+                        }
+                    }
+
                     jokeIndex++;
                 }
             } catch (IndexOutOfBoundsException ex) {
@@ -243,7 +365,69 @@ class Worker extends Thread {
                     proverbIndex = 0;
 
                 } else {
-                    out.println(proverbs[proverbIndex]);
+                    if(proverbIndex ==0) {
+                        if(proverbOrderList.get(0).equals("A")){
+                            out.println(proverbsArr[0][1]);
+                            System.out.println((proverbsArr[0][1]));
+                        } else if(proverbOrderList.get(0).equals("B")){
+                            out.println(proverbsArr[1][1]);
+                            System.out.println((proverbsArr[1][1]));
+                        } else if(proverbOrderList.get(0).equals("C")) {
+                            out.println(proverbsArr[2][1]);
+                            System.out.println((proverbsArr[2][1]));
+                        } else if(proverbOrderList.get(0).equals("D")) {
+                            out.println(proverbsArr[3][1]);
+                            System.out.println((proverbsArr[3][1]));
+                        }
+                    }
+
+                    else if(proverbIndex ==1) {
+                        if(proverbOrderList.get(1).equals("A")){
+                            out.println(proverbsArr[0][1]);
+                            System.out.println((proverbsArr[0][1]));
+                        } else if(proverbOrderList.get(1).equals("B")){
+                            out.println(proverbsArr[1][1]);
+                            System.out.println((proverbsArr[1][1]));
+                        } else if(proverbOrderList.get(1).equals("C")) {
+                            out.println(proverbsArr[2][1]);
+                            System.out.println((proverbsArr[2][1]));
+                        } else if(proverbOrderList.get(1).equals("D")) {
+                            out.println(proverbsArr[3][1]);
+                            System.out.println((proverbsArr[3][1]));
+                        }
+                    }
+
+                    else if(proverbIndex ==2) {
+                        if(proverbOrderList.get(2).equals("A")){
+                            out.println(proverbsArr[0][1]);
+                            System.out.println((proverbsArr[0][1]));
+                        } else if(proverbOrderList.get(2).equals("B")){
+                            out.println(proverbsArr[1][1]);
+                            System.out.println((proverbsArr[1][1]));
+                        } else if(proverbOrderList.get(2).equals("C")) {
+                            out.println(proverbsArr[2][1]);
+                            System.out.println((proverbsArr[2][1]));
+                        } else if(proverbOrderList.get(2).equals("D")) {
+                            out.println(proverbsArr[3][1]);
+                            System.out.println((proverbsArr[3][1]));
+                        }
+                    }
+                    else if(proverbIndex ==3) {
+                        if(proverbOrderList.get(3).equals("A")){
+                            out.println(proverbsArr[0][1]);
+                            System.out.println((proverbsArr[0][1]));
+                        } else if(proverbOrderList.get(3).equals("B")){
+                            out.println(proverbsArr[1][1]);
+                            System.out.println((proverbsArr[1][1]));
+                        } else if(proverbOrderList.get(3).equals("C")) {
+                            out.println(proverbsArr[2][1]);
+                            System.out.println((proverbsArr[2][1]));
+                        } else if(proverbOrderList.get(3).equals("D")) {
+                            out.println(proverbsArr[3][1]);
+                            System.out.println((proverbsArr[3][1]));
+                        }
+                    }
+
                     proverbIndex++;
                 }
             } catch (IndexOutOfBoundsException ex) {
