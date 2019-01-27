@@ -20,132 +20,6 @@
 
     *Jokes taken from http://pun.me/pages/dad-jokes.php
     *Proverbs taken from https://web.sonoma.edu/users/d/daniels/chinaproverbs.html
-
-    **Notes for my future refactors (doesn't apply to current code, grader can skip down to the start of the import statements for grading)
-
-     joke bit representation          proverb bit representation      jokes sent bitrep    proverbs sent bitrep
-
-       ABCD = 000001 = 1 = 0x01         ABCD = 000001 = 1 = 0x01          0 = 000 = 0x0         0 = 000 = 0x0
-       ABDC = 000010 = 2 = 0x02         ABDC = 000010 = 2 = 0x02          1 = 001 = 0x1         1 = 001 = 0x1
-       ACBD = 000011 = 3 = 0x03         ACBD = 000011 = 3 = 0x03          2 = 010 = 0x2         2 = 010 = 0x2
-       ACDB = 000100 = 4 = 0x04         ACDB = 000100 = 4 = 0x04          3 = 011 = 0x3         3 = 011 = 0x3
-       ABDC = 000101 = 5 = 0x05         ABDC = 000101 = 5 = 0x05          4 = 100 = 0x4         4 = 100 = 0x4
-       ADCB = 000110 = 6 = 0x06         ADCB = 000110 = 6 = 0x06
-
-       BACD = 000111 = 7 = 0x07         BACD = 000111 = 7 = 0x07
-       BADC = 001000 = 8 = 0x08         BADC = 001000 = 8 = 0x08
-       BCAD = 001001 = 9 = 0x09         BCAD = 001001 = 9 = 0x09
-       BCDA = 001010 = 10 = 0x0A        BCDA = 001010 = 10 = 0x0A
-       BDAC = 001011 = 11 = 0x0B        BDAC = 001011 = 11 = 0x0B
-       BDCA = 001100 = 12 = 0x0C        BDCA = 001100 = 12 = 0x0C
-
-       CABD = 001101 = 13 = 0x0D        CABD = 001101 = 13 = 0x0D
-       CADB = 001110 = 14 = 0x0E        CADB = 001110 = 14 = 0x0E
-       CBAD = 001111 = 15 = 0x0F        CBAD = 001111 = 15 = 0x0F
-       CBDA = 010000 = 16 = 0x10        CBDA = 010000 = 16 = 0x10
-       CDAB = 010001 = 17 = 0x11        CDAB = 010001 = 17 = 0x11
-       CDBA = 010010 = 18 = 0x12        CDBA = 010010 = 18 = 0x12
-
-       DABC = 010011 = 19 = 0x13        DABC = 010011 = 19 = 0x13
-       DACB = 010100 = 20 = 0x14        DACB = 010100 = 20 = 0x14
-       DBAC = 010101 = 21 = 0x15        DBAC = 010101 = 21 = 0x15
-       DBCA = 010110 = 22 = 0x16        DBCA = 010110 = 22 = 0x16
-       DCAB = 010111 = 23 = 0x17        DCAB = 010111 = 23 = 0x17
-       DCBA = 011000 = 24 = 0x18        DCBA = 011000 = 24 = 0x18
-
-
-        * make an array that represents all states of
-        * joke order + proverb order + # jokes sent + # proverbs sent   =      binary        = hex    = decimal      mod4       mod16
-
-            ABCD     +     ABCD      +       0      +       0           = 000001 000001 000 000 = 0x1040 = 4160        0        0
-            ABCD     +     ABCD      +       0      +       1           = 000001 000001 000 001 = 0x1041 = 4161        1        1
-            ABCD     +     ABCD      +       0      +       2           = 000001 000001 000 010 = 0x1042 = 4162        2        2
-            ABCD     +     ABCD      +       0      +       3           = 000001 000001 000 011 = 0x1043 = 4163        3        3
-            ABCD     +     ABCD      +       0      +       4           = 000001 000001 000 100 = 0x1044 = 4164        0        4
-
-            ABCD     +     ABCD      +       1      +       0           = 000001 000001 001 000 = 0x1048 = 4168        0        8
-            ABCD     +     ABCD      +       1      +       1           = 000001 000001 001 001 = 0x1049 = 4169        1        9
-            ABCD     +     ABCD      +       1      +       2           = 000001 000001 001 010 = 0x104A = 4170        2        10
-            ABCD     +     ABCD      +       1      +       3           = 000001 000001 001 011 = 0x104B = 4171        3        11
-            ABCD     +     ABCD      +       1      +       4           = 000001 000001 001 100 = 0x104C = 4172        0        12
-
-            ABCD     +     ABCD      +       2      +       0           = 000001 000001 010 000 = 0x1050 = 4176        0        0
-            ABCD     +     ABCD      +       2      +       1           = 000001 000001 010 001 = 0x1051 = 4177        1        1
-            ABCD     +     ABCD      +       2      +       2           = 000001 000001 010 010 = 0x1052 = 4178        2        2
-            ABCD     +     ABCD      +       2      +       3           = 000001 000001 010 011 = 0x1053 = 4179        3        3
-            ABCD     +     ABCD      +       2      +       4           = 000001 000001 010 100 = 0x1054 = 4180        0        4
-
-            ABCD     +     ABCD      +       3      +       0           = 000001 000001 011 000 = 0x1058 = 4184        0        8
-            ABCD     +     ABCD      +       3      +       1           = 000001 000001 011 001 = 0x1059 = 4185        1        9
-            ABCD     +     ABCD      +       3      +       2           = 000001 000001 011 010 = 0x105A = 4186        2        10
-            ABCD     +     ABCD      +       3      +       3           = 000001 000001 011 011 = 0x105B = 4187        3        11
-            ABCD     +     ABCD      +       3      +       4           = 000001 000001 011 100 = 0x105c = 4188        0        12
-
-            ABCD     +     ABCD      +       4      +       0           = 000001 000001 100 000 = 0x1060 = 4192        0        0
-            ABCD     +     ABCD      +       4      +       1           = 000001 000001 100 001 = 0x1061 = 4193        1        1
-            ABCD     +     ABCD      +       4      +       2           = 000001 000001 100 010 = 0x1062 = 4194        2        2
-            ABCD     +     ABCD      +       4      +       3           = 000001 000001 100 011 = 0x1063 = 4195        3        3
-            ABCD     +     ABCD      +       4      +       4           = 000001 000001 100 100 = 0x1064 = 4196        0        4
-
-
-        //iterate over the 1st column on jState array looking to see if userId matches. then process jokes/ proverbs
-        // lock after joke mode while loop or before? what's the critical section??
-
-
-        *Next combination
-
-            ABCD     +     ABDC      +       0      +       0           = 000001 000010 000 000 = 0x1080 = 4224        0
-
-            ABCD     +     ABCD      +       1      +       0           = 000001 000001 001 000 = 0x1048 = 4168        0
-            ABCD     +     ABDC      +       0      +       1           = 000001 000010 000 001 = 0x1081 = 4225        1
-
-
-       *example jState search:
-       * Joke Mode Enabled, Order = ABCD
-       * Proverb Mode Disabled, Order = ABCD
-       * At start the jState =  000001 000001 000000 = 0x1040 = 4160
-       * Joke A is delivered, State updates to = 000001 000001 001000 = 0x1048 = 4168           + 8 decimal
-       * Joke B is delivered, jState updates to = 000001 000001 010000 = 0x1050 = 4176           + 8 decimal
-       * Joke C is delivered, jState updates to = 000001 000001 011000 = 0x1058 = 4184           + 8 decimal
-       * Joke D is delivered, jState updates to = 000001 000001 100000 = 0x1060 = 4192           + 8 decimal
-       * Message announces "JOKE CYCLE COMPLETED"
-       * State resets to no jokes delivered = 000001 000001 000000 = 0x1040 = 4160              (4192-4160 = 32 decimal)
-       * Repeat until switched to proverb mode or quit
-
-
-                   //while(mode == joke){
-            for(int i = 0; i< jState.length; i++){
-                if (jState[i][0] == userId ){
-                    if(jState[i[9] == 0)                                     //will adding one to jState work if proverbs != 0 (need another loop for this)
-                        System.out.println(jState[i][4]);
-                    userId = jState[i+1][0] ;                                 //how to handle the 4 different jState incrementers?  Do this 4 different times to handle breaks and switches to proverb
-                else (jState[i][9] == 1)
-                    System.out.println(jState[i][5]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 2)
-                    System.out.println(jState[i][6]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 3)
-                    System.out.println(jState[i][7]);
-                    userId = jState[i+1][0];
-                else (jState[i][9] == 4)
-                    System.out.println(jState[i][8]);
-                    userId = jState[i-4][0];
-                }
-            }
-
-
-
-                    /*
-        String[][] jState = {
-
-                {"ABCBABCD00", "000001000001000000", "4160", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD10", "000001000001001000", "4168", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD20", "000001000001010000", "4176", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD30", "000001000001011000", "4184", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-                {"ABCBABCD40", "000001000001100000", "4192", jokes[0], jokes[1], jokes[2], jokes[3], "Joke Cycle Complete"},
-
-        };
  */
 
 import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
@@ -153,11 +27,11 @@ import java.net.*;      //Pull in the Java networking libraries for JokeServer.j
 import java.util.*;     //Pull in the Java utility libraries for JokeServer.java use
 
 
-class Worker extends Thread {                               //Class declaration for Worker which will be a subclass of Thread class
-    Socket sock;                                            //local Worker definition for sock of type Socket
+class Worker extends Thread {                               // Class declaration for Worker which will be a subclass of Thread class
+    Socket sock;                                            // local Worker definition for sock of type Socket
 
     Worker(Socket s) {
-        sock = s;                               //constructor to accept the incoming sockets and set to local Socket definition called "sock"
+        sock = s;                               // constructor to accept the incoming sockets and set to local Socket definition called "sock"
     }
 
     public void run() {                         // method launched with the .start() call in JokeServer class

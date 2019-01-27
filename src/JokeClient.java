@@ -18,6 +18,7 @@
 
 5. My Notes
 
+    I faked the random generation of joke order and proverb order by just shuffling two arrays containing ABCD
  */
 
 
@@ -33,8 +34,9 @@ public class JokeClient {                                                       
         int jokeIndex=0;                                                                            // Local JokeClient definition "jokeIndex" of type int, set equal to zero
         int proverbIndex=0;                                                                         // Local JokeClient definition "proverbIndex" of type int, set equal to zero
         ArrayList<Integer> indexArray = new ArrayList<>();                                          // Local JokeClient instantiation of indexArray ArrayList
+
         if (args.length < 1) serverName = "localhost";                                              // Sets serverName to localhost if no client input on the initial execution of JokeClient
-        else serverName = args[0];                                                                  // Sets serverName to the first indexArray of the client input
+        else serverName = args[0];                                                                  // Sets serverName to the first index of the client input
 
         System.out.println("Now Communicating with : " + serverName + ", Port: 43000");             // print statement to the console that tell the host name and port number
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));                   // launches one new BufferReader object to handle client input
