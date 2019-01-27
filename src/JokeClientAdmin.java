@@ -19,8 +19,8 @@
 5. My Notes
  */
 
-import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
-import java.net.*;      //Pull in the Java networking libraries for JokeServer.java use
+import java.io.*;       //Pull in the Java Input - Output libraries for JokeClientAdmin.java use
+import java.net.*;      //Pull in the Java networking libraries for JokeClientAdmin.java use
 
 public class JokeClientAdmin {
     public static void main(String args[]) throws IOException {
@@ -34,7 +34,7 @@ public class JokeClientAdmin {
         try {
             String mode="JOKE";                                                                                      //Start with JOKE mode by default
             String anotherMode;
-            System.out.println("You are starting in Joke Mode");
+            System.out.println("You are starting in Joke Mode. Press Enter to Toggle Modes");
             do {
                 anotherMode = in.readLine();
                 toggleMode(mode, serverName);
