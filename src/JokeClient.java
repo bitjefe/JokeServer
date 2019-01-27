@@ -41,7 +41,7 @@ public class JokeClient {                                                       
         System.out.println("Now Communicating with : " + serverName + ", Port: 43000");             // print statement to the console that tell the host name and port number
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));                   // launches one new BufferReader object to handle client input
 
-
+        List<String> order = new ArrayList<>();
         List<String> jokeRandOrder = new ArrayList<>();                                             // create a random joke order ArrayList and add "A", "B", "C", "D" to it
         jokeRandOrder.add("A");
         jokeRandOrder.add("B");
@@ -55,6 +55,8 @@ public class JokeClient {                                                       
             jokeOrderString.append(s);
         }
 
+        order.add(jokeOrderString.toString());
+
         List<String> proverbRandOrder = new ArrayList<>();                                          // create a random proverb order ArrayList and add "A", "B", "C", "D" to it
         proverbRandOrder.add("A");
         proverbRandOrder.add("B");
@@ -67,6 +69,8 @@ public class JokeClient {                                                       
         for(String s: proverbRandOrder){
             proverbOrderString.append(s);
         }
+
+        order.add(proverbOrderString.toString());
 
         try {                                                                                       // start of error catching with try block
             String userName;                                                                        // local definition of user's name of type String
@@ -86,10 +90,52 @@ public class JokeClient {                                                       
                 indexArray.clear();                                                                      // clear out the indexArray ArrayList each loop
 
                 if(anotherJoke.indexOf("quit") < 0 && userName.indexOf("quit")<0) {                                                                                     // if the client doesn't initially type quit or type quit in the console in any subsequent iterations, execute the function call
-                    indexArray = getJokeProverb(userName, userId, jokeOrderString.toString(), proverbOrderString.toString(), jokeIndex, proverbIndex, serverName);      // set indexArray equal to return value of getJokeProverb (jokeIndex in first indexArray, proverbIndex in second indexArray)
+                    indexArray = getJokeProverb(userName, userId, order.get(0), order.get(1), jokeIndex, proverbIndex, serverName);      // set indexArray equal to return value of getJokeProverb (jokeIndex in first indexArray, proverbIndex in second indexArray)
 
                     jokeIndex = indexArray.get(0);                                                           // set jokeIndex to the first indexArray of arrayList named indexArray
-                    proverbIndex = indexArray.get(1);                                                        // set jokeIndex to the first indexArray of arrayList named indexArray
+                    proverbIndex = indexArray.get(1);
+
+                    if(jokeIndex==4){
+                        jokeIndex=0;
+
+                        jokeRandOrder.clear();
+
+                        for(int i=0;i<jokeOrderString.length();i++){
+                            jokeRandOrder.add(String.valueOf(jokeOrderString.charAt(i)));
+                        }
+                        Collections.shuffle(jokeRandOrder);
+                        System.out.println(jokeRandOrder);          //comment this out
+
+                        StringBuilder newJokeOrderString = new StringBuilder(jokeRandOrder.size());                    // build the random order string of jokes to be sent to JokeServer for processing
+                        for(String s: jokeRandOrder){
+                            newJokeOrderString.append(s);
+                        }
+
+                        order.set(0,newJokeOrderString.toString());
+                        System.out.println("new jokeOrder = "+order.get(0));            //comment this out
+
+                    }
+
+                    if(proverbIndex==4){
+                        proverbIndex=0;
+
+                        proverbRandOrder.clear();
+
+                        for(int i=0;i<proverbOrderString.length();i++){
+                            proverbRandOrder.add(String.valueOf(proverbOrderString.charAt(i)));
+                        }
+                        Collections.shuffle(proverbRandOrder);
+                        System.out.println(proverbRandOrder);                   //comment this out
+
+                        StringBuilder newProverbOrderString = new StringBuilder(proverbRandOrder.size());                    // build the random order string of jokes to be sent to JokeServer for processing
+                        for(String s: proverbRandOrder){
+                            newProverbOrderString.append(s);
+                        }
+
+                        order.set(1,newProverbOrderString.toString());
+                        System.out.println("new Proverb order = "+order.get(1));                //comment this out
+                    }
+
                 }
 
             } while (anotherJoke.indexOf("quit") < 0 && userName.indexOf("quit")<0);                        // continue the loop until the user types quit on the initial prompt or in any subsequent joke/proverb iterations
@@ -122,16 +168,26 @@ public class JokeClient {                                                       
 
             toServer.flush();                                                                               // clears out the toServer buffer
 
-            for(int i=0; i<3; i++) {                                                            // receives a 3 line response from JokeServer if no exceptions on server.
+            for(int i=0; i<3; i++) {                                                            // receives a 5 line response from JokeServer if no exceptions on server.
                 textFromServer = fromServer.readLine();
-                if (textFromServer != null && i==1) {                                           // Receives the jokeIndex from the JokeServer, converts to an integer, and adds to index arrayList
+                if (textFromServer !=null && i==0) System.out.println(textFromServer);
+                else if (textFromServer != null && i==1) {                                           // Receives the jokeIndex from the JokeServer, converts to an integer, and adds to index arrayList
                     jokeIndex = Integer.parseInt(textFromServer);
-                    index.add(jokeIndex);
+                    if(jokeIndex==4){
+                        System.out.println("Joke Cycle Complete");
+                        index.add(jokeIndex);
+                    } else{
+                        index.add(jokeIndex);
+                    }
                 } else if (textFromServer != null && i==2) {                                    // Receives the proverbIndex from the JokeServer, converts to an integer, and adds to index arrayList
                     proverbIndex = Integer.parseInt(textFromServer);
-                    index.add(proverbIndex);
+                    if(proverbIndex==4){
+                        System.out.println("Proverb Cycle Complete");
+                        index.add(proverbIndex);
+                    } else{
+                        index.add(proverbIndex);
+                    }
                 }
-                else if (textFromServer !=null && i==0) System.out.println(textFromServer);     // Receives either a joke or a proverb from the JokeServer and prints it to the JokeClient console
             }
 
             sock.close();                                                                       // closes only the current connection

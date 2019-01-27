@@ -33,7 +33,6 @@ public class JokeClientAdmin {                                                  
         System.out.println("Now Communicating with : " + serverName + ", Port: 45000");                             // print statement to the console that tell the host name and port number
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));                                   // launches one new BufferReader object to handle AdminClient input
 
-
         try {
             String mode;                                                                                            // local definition of anotherMode to handle enter keyboard events
             String anotherMode;                                                                                     // local definition of anotherMode to handle enter keyboard events

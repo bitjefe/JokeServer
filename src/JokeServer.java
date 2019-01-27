@@ -20,6 +20,10 @@
 
     *Jokes taken from http://pun.me/pages/dad-jokes.php
     *Proverbs taken from https://web.sonoma.edu/users/d/daniels/chinaproverbs.html
+    *
+    * Slight bug, inefficiency in re=randomization of the joke/proverb order occurs when the "complete message" is sent
+    * the arrayList re-randomizes twice in this instance. This is an unnecessary server calculation but it still functions correctly.
+    * This would be low-hanging fruit to optimize the code in a refactor
  */
 
 import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
@@ -84,7 +88,6 @@ class Worker extends Thread {                               // Class declaration
 
     static void getJokeProverb(String userName, String userId, String jokeOrderString, String proverbOrderString, Integer jokeIndex, Integer proverbIndex, PrintStream out) {          //custom method to return joke or proverb to the client
 
-
         // initializes all the ArrayLists needed to process the incoming joke/proverb order and states
         List<String> userIdArray = new ArrayList<>();
         List<String> jokeOrderList = new ArrayList<>();
@@ -133,8 +136,6 @@ class Worker extends Thread {                               // Class declaration
                 {"D", "PD " + userName + ": Determination tempers the sword of your character."}
         };
 
-
-
         if(JokeServer.JokeMode){                                                    // Start of Joke Mode = true conditional process
             try {                                                                   // start of error checking with first try block
                 if(userIdArray.contains(userId))                                    // checks to see if the UUID has been added to the serverList. This is the only information stored on state (for future refactoring use only, doesn't effect the code)
@@ -143,8 +144,8 @@ class Worker extends Thread {                               // Class declaration
                     userIdArray.add(userId);                                        // UUID is added to the userIdArray (however the state is not recorded in the list with it since its only an arrayList. Refactor to array?
 
                 if (jokeIndex == 4) {                                               // if all the jokes have been sent the client send the client a message saying "Joke Cycle Complete" and reset the index to the first joke
-                    out.println("Joke Cycle Complete");
-                    jokeIndex = 0;
+                    System.out.println(jokeOrderList);
+                    Collections.shuffle(jokeOrderList);
 
                 } else {                                                            // if the jokeIndex is between 0-3, do the following:
                     if(jokeIndex ==0) {                                             // if the jokeIndex equals 0:
@@ -227,8 +228,8 @@ class Worker extends Thread {                               // Class declaration
                     userIdArray.add(userId);                                        // UUID is added to the userIdArray (however the state is not recorded in the list with it since its only an arrayList. Refactor to array?
 
                 if (proverbIndex == 4) {                                            // if all the proverbs have been sent the client send the client a message saying "Proverb Cycle Complete" and reset the index to the first proverb
-                    out.println("Proverb Cycle Complete");
-                    proverbIndex = 0;
+                    System.out.println(proverbOrderList);
+                    Collections.shuffle(proverbOrderList);
 
                 } else {                                                            // if the proverbIndex is between 0-3, do the following:
                     if(proverbIndex ==0) {                                          // if the proverbIndex equals 0:
