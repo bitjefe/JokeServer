@@ -41,7 +41,7 @@ public class JokeClient {                                                       
         System.out.println("Now Communicating with : " + serverName + ", Port: 43000");             // print statement to the console that tell the host name and port number
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));                   // launches one new BufferReader object to handle client input
 
-        List<String> order = new ArrayList<>();
+        List<String> order = new ArrayList<>();                                                     // instantiate the order arrayList to handle the re-randomization feature
         List<String> jokeRandOrder = new ArrayList<>();                                             // create a random joke order ArrayList and add "A", "B", "C", "D" to it
         jokeRandOrder.add("A");
         jokeRandOrder.add("B");
@@ -55,7 +55,7 @@ public class JokeClient {                                                       
             jokeOrderString.append(s);
         }
 
-        order.add(jokeOrderString.toString());
+        order.add(jokeOrderString.toString());                                                      // add the random order of jokes to the first index of the order arrayList, of type String
 
         List<String> proverbRandOrder = new ArrayList<>();                                          // create a random proverb order ArrayList and add "A", "B", "C", "D" to it
         proverbRandOrder.add("A");
@@ -70,7 +70,7 @@ public class JokeClient {                                                       
             proverbOrderString.append(s);
         }
 
-        order.add(proverbOrderString.toString());
+        order.add(proverbOrderString.toString());                                                   // add the random order of proverbs to the second index of the order arrayList, of type String
 
         try {                                                                                       // start of error catching with try block
             String userName;                                                                        // local definition of user's name of type String
@@ -92,48 +92,47 @@ public class JokeClient {                                                       
                 if(anotherJoke.indexOf("quit") < 0 && userName.indexOf("quit")<0) {                                                                                     // if the client doesn't initially type quit or type quit in the console in any subsequent iterations, execute the function call
                     indexArray = getJokeProverb(userName, userId, order.get(0), order.get(1), jokeIndex, proverbIndex, serverName);      // set indexArray equal to return value of getJokeProverb (jokeIndex in first indexArray, proverbIndex in second indexArray)
 
-                    jokeIndex = indexArray.get(0);                                                           // set jokeIndex to the first indexArray of arrayList named indexArray
-                    proverbIndex = indexArray.get(1);
+                    jokeIndex = indexArray.get(0);                                                           // set jokeIndex to the first index of arrayList named indexArray
+                    proverbIndex = indexArray.get(1);                                                        // set the proverbIndex to the second index of arrayLIst named indexArray
 
-                    if(jokeIndex==4){
-                        jokeIndex=0;
+                    if(jokeIndex==4){                                                                       // if all the jokes have been sent enter this if statement
+                        jokeIndex=0;                                                                        // set the jokeIndex back to 0 (the first joke in the sequence)
 
-                        jokeRandOrder.clear();
+                        jokeRandOrder.clear();                                                              // clear the original arrayList containing the random order of jokes
 
-                        for(int i=0;i<jokeOrderString.length();i++){
+                        for(int i=0;i<jokeOrderString.length();i++){                                        // add the joke order letters back to the cleared jokeRandOrder arrayList
                             jokeRandOrder.add(String.valueOf(jokeOrderString.charAt(i)));
                         }
-                        Collections.shuffle(jokeRandOrder);
-                        System.out.println(jokeRandOrder);          //comment this out
+                        Collections.shuffle(jokeRandOrder);                                                 // re-randomize (shuffle) the joke order
+
 
                         StringBuilder newJokeOrderString = new StringBuilder(jokeRandOrder.size());                    // build the random order string of jokes to be sent to JokeServer for processing
                         for(String s: jokeRandOrder){
                             newJokeOrderString.append(s);
                         }
 
-                        order.set(0,newJokeOrderString.toString());
-                        System.out.println("new jokeOrder = "+order.get(0));            //comment this out
+                        order.set(0,newJokeOrderString.toString());                                                   // set the newly randomized joke order to the first index of order arrayList
+
 
                     }
 
-                    if(proverbIndex==4){
-                        proverbIndex=0;
+                    if(proverbIndex==4){                                                                        // if all the proverbs have been sent enter this if statement
+                        proverbIndex=0;                                                                         // set the proverbIndex back to 0 (the first proverb in the sequence)
 
-                        proverbRandOrder.clear();
+                        proverbRandOrder.clear();                                                               // clear the original arrayList containing the random order of proverbs
 
-                        for(int i=0;i<proverbOrderString.length();i++){
+                        for(int i=0;i<proverbOrderString.length();i++){                                         // add the proverbs order letters back to the cleared proverbRandOrder arrayList
                             proverbRandOrder.add(String.valueOf(proverbOrderString.charAt(i)));
                         }
-                        Collections.shuffle(proverbRandOrder);
-                        System.out.println(proverbRandOrder);                   //comment this out
+                        Collections.shuffle(proverbRandOrder);                                                  // re-randomize (shuffle) the proverb order
 
-                        StringBuilder newProverbOrderString = new StringBuilder(proverbRandOrder.size());                    // build the random order string of jokes to be sent to JokeServer for processing
+
+                        StringBuilder newProverbOrderString = new StringBuilder(proverbRandOrder.size());                    // build the random order string of proverbs to be sent to JokeServer for processing
                         for(String s: proverbRandOrder){
                             newProverbOrderString.append(s);
                         }
 
-                        order.set(1,newProverbOrderString.toString());
-                        System.out.println("new Proverb order = "+order.get(1));                //comment this out
+                        order.set(1,newProverbOrderString.toString());                                           // set the newly randomized proverb order to the second index of order arrayList
                     }
 
                 }

@@ -20,10 +20,6 @@
 
     *Jokes taken from http://pun.me/pages/dad-jokes.php
     *Proverbs taken from https://web.sonoma.edu/users/d/daniels/chinaproverbs.html
-    *
-    * Slight bug, inefficiency in re=randomization of the joke/proverb order occurs when the "complete message" is sent
-    * the arrayList re-randomizes twice in this instance. This is an unnecessary server calculation but it still functions correctly.
-    * This would be low-hanging fruit to optimize the code in a refactor
  */
 
 import java.io.*;       //Pull in the Java Input - Output libraries for JokeServer.java use
@@ -143,7 +139,7 @@ class Worker extends Thread {                               // Class declaration
                 else
                     userIdArray.add(userId);                                        // UUID is added to the userIdArray (however the state is not recorded in the list with it since its only an arrayList. Refactor to array?
 
-                if (jokeIndex == 4) {                                               // if all the jokes have been sent the client send the client a message saying "Joke Cycle Complete" and reset the index to the first joke
+                if (jokeIndex == 4) {                                               // if all the jokes have been sent the client, shuffle the arrayList of jokes for the next cycle to meet the randomization requirement
                     System.out.println(jokeOrderList);
                     Collections.shuffle(jokeOrderList);
 
@@ -227,7 +223,7 @@ class Worker extends Thread {                               // Class declaration
                 else
                     userIdArray.add(userId);                                        // UUID is added to the userIdArray (however the state is not recorded in the list with it since its only an arrayList. Refactor to array?
 
-                if (proverbIndex == 4) {                                            // if all the proverbs have been sent the client send the client a message saying "Proverb Cycle Complete" and reset the index to the first proverb
+                if (proverbIndex == 4) {                                            // if all the proverbs have been sent the client, shuffle the arrayList of proverbs for the next cycle to meet the randomization requirement
                     System.out.println(proverbOrderList);
                     Collections.shuffle(proverbOrderList);
 
